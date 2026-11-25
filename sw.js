@@ -2,7 +2,7 @@
    ・ページ本体は「ネット優先」：つながるときは常に最新版を開き、つながらないときは前回の版を開く
    ・アイコン等は「保存分優先」、フォントは「保存分を使いつつ裏で更新」
    ・入力したシートの保存（ブラウザ内の保存領域）には関与しない */
-const VERSION = "c5df3349cf25";
+const VERSION = "57432078b92f";
 const CACHE = "seihai-multi-" + VERSION;
 const FONT_CACHE = "seihai-multi-fonts";
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png"];

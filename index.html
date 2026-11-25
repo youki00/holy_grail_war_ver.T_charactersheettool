@@ -461,8 +461,13 @@ body.m .bnav{padding-left:calc(4px + env(safe-area-inset-left));padding-right:ca
           <li><b>免責。</b>本ツールの利用によって生じた損害（入力データの消失など）について、制作者は責任を負いません。入力内容はお使いの端末のブラウザにだけ保存されるため、大切なシートは「JSON出力」で控えを取ってください。</li>
           <li>この規約は予告なく変更することがあります。変更後は、変更後の規約が適用されます。</li>
         </ul></dd>
-      <dt>ツールのバージョン</dt><dd>バージョン1.0（2026年11月24日）</dd>
+      <dt>ツールのバージョン</dt><dd>バージョン1.01（2026年11月26日）</dd>
       <dt>変更履歴</dt><dd>
+        <b>バージョン1.01</b>（2026年11月26日）
+        <ul>
+          <li>IFGO（PvE）で「改造宝具」が取得できなかった不具合を直しました。サーヴァントの宝具として取得できます。</li>
+          <li>T6（PvP）で、マスター宝具の消費FPが可変式のときの案内（「伝承保菌」の記載どおり、選べる中で最低コストのFPに固定）が表示されていなかったのを直しました。</li>
+        </ul>
         <b>バージョン1.0</b>（2026年11月24日）　最初の公開版
         <ul>
           <li>「T6（PvP）」と「IFGO（PvE）」を切り替えて作成できるキャラクターシート作成ツールとして公開しました。</li>
@@ -516,7 +521,7 @@ body.m .bnav{padding-left:calc(4px + env(safe-area-inset-left));padding-right:ca
     <ul>
       <li>入力画面の上の「ルール」で T6（PvP）と IFGO（PvE）を切り替えます。シートごとに保存され、JSONにも含まれます。</li>
       <li><b>T6（PvP）</b>：T6シートのクラス・特性・クラススキル適正表・汎用マスタースキル（魔力供給Ⅰ型／Ⅱ型・回路賦活・回路連結・魔力装填）・固有マスタースキル・サンプルスキル/宝具。特性「射撃」は弓特性で選んだ能力値を先制判定の基準値にします。選択ルール（霊基改造・階級制度）はオン・オフできます。</li>
-      <li><b>IFGO（PvE）</b>：T6に、PvEの作成時レギュレーションと変更点を加えます。攻撃系宝具の「マスター即死効果」→「HP0（気絶状態）」、騎乗・単独行動・陣地作成・狂化・射撃・創造の変更、強化触媒の記載の変更、情報探索系・魂喰らい関連・改造宝具・人外種族・雇われ人・交渉巧者は取得不可。霊基改造・階級制度はオンで固定。</li>
+      <li><b>IFGO（PvE）</b>：T6に、PvEの作成時レギュレーションと変更点を加えます。攻撃系宝具の「マスター即死効果」→「HP0（気絶状態）」、騎乗・単独行動・陣地作成・狂化・射撃・創造の変更、強化触媒の記載の変更、情報探索系・魂喰らい関連・人外種族・雇われ人・交渉巧者は取得不可。霊基改造・階級制度はオンで固定。</li>
     </ul>
   </div>
   <div class="card" id="ab-rules"><h2>計算ルール</h2>
@@ -535,7 +540,7 @@ body.m .bnav{padding-left:calc(4px + env(safe-area-inset-left));padding-right:ca
   <div class="card" id="ab-env"><h2>動作環境</h2>
     <ul>
       <li>PC・スマートフォンの最新のブラウザ（Chrome／Edge／Safari／Firefox）。画面幅が狭いと自動でスマホ版の画面になります（メニューの「表示」で切り替え可）。</li>
-      <li>ツールのバージョン：バージョン1.25（保存・JSONのデータ形式は version 3）</li>
+      <li>ツールのバージョン：バージョン1.01（保存・JSONのデータ形式は version 4）</li>
     </ul>
   </div>
 </section>
@@ -859,8 +864,9 @@ function blankTroop(){
 }
 /* 従者（トループ）：初期英雄点は各シートで入力（初期値21） */
 function blankTroops(){ return {list:[]}; }
+const DATA_VERSION = 4;   /* 保存・JSONのデータ形式 */
 function blankSheet(){
-  return {app:APP_ID,version:3,
+  return {app:APP_ID,version:DATA_VERSION,
           meta:{pl:"", sys:TOOL_SYS[0]},master:blankMaster(),servant:blankServant(),sub:blankSub(),troops:blankTroops()};
 }
 /* 既定の形に合わせる（足りない項目は既定値で補い、既定にない項目は捨てる） */
@@ -891,7 +897,7 @@ function normalize(raw){
   s.servant.nps = arrOf(s.servant.nps, np); s.master.nps = arrOf(s.master.nps, np);
   fixForSys(s);
   if(prevSys) applySys(prevSys);
-  s.app = APP_ID; s.version = 4;
+  s.app = APP_ID; s.version = DATA_VERSION;
   return s;
 }
 
@@ -941,7 +947,6 @@ function pveBan(path, it, s = state){
   const n = String((it && it.name) || ""), fx = String((it && it.effect) || "");
   if(path === "master.unique" && banHit(sysBanMaster(s), n)) return `${SYS_SHORT[sysOf(s)]}では取得不可のマスタースキル`;
   if(!isPve(s)) return "";
-  if((path === "servant.nps" || path === "master.nps") && (n.includes("改造宝具") || (it && it.kind) === "改造宝具")) return "改造宝具";
   if(PVE_SOUL.some(b => n.includes(b))) return "魂喰らいとその関連スキル";
   if(isInfoType(fx)) return "タイプ：情報探索系";
   return "";
@@ -1121,7 +1126,7 @@ function compute(s){
     if(!mnpFilled.length) WM.push({l:"warn",t:`マスター宝具が未入力です（${masterNpSources(s).map(n => `「${n}」`).join("・")}で宝具を1つ持てます）`});
     if(mnpAll.length > MASTER_NP_MAX) WM.push({l:"err",t:`マスター宝具は${MASTER_NP_MAX}つまでです（${mnpAll.length}つあります）`});
     if(mnpFilled.some(it => /改造宝具/.test(it.name || "") || it.kind === "改造宝具")) WM.push({l:"warn",t:"マスター宝具に「改造宝具」は原則選べません"});
-    if(pve && mnpFilled.some(it => /FP[^\n]*?(〔\s*[nｎ]\s*〕|「\s*[nｎ]\s*」|\d+\s*or\s*\d+)/i.test(it.effect || "")))
+    if(mnpFilled.some(it => /FP[^\n]*?(〔\s*[nｎ]\s*〕|「\s*[nｎ]\s*」|\d+\s*or\s*\d+)/i.test(it.effect || "")))
       WM.push({l:"info",t:"マスター宝具の消費FPが可変式の場合、選べる中で最低コストのFPに固定されます"});
   } else if(mnpFilled.length) WM.push({l:"info",t:"マスター宝具の入力内容が残っています（「伝承保菌」などマスター宝具を持つスキルがないため、入力欄・画像には出していません）"});
 

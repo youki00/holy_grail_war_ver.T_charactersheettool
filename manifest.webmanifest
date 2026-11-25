@@ -1,7 +1,7 @@
 {
-  "name": "聖杯戦争TRPG キャラシメーカー（T6・IFGO・HCGO・まほろば）",
-  "short_name": "キャラシ4種",
-  "description": "聖杯戦争TRPG（T6 PvP・IFGO・HCGO・まほろば学園）のキャラクターシート作成ツール",
+  "name": "聖杯戦争TRPG キャラシメーカー（T6・IFGO）",
+  "short_name": "キャラシT6",
+  "description": "聖杯戦争TRPG（T6 PvP・IFGO）のキャラクターシート作成ツール",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
